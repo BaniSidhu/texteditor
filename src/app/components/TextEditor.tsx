@@ -25,6 +25,7 @@ const TextEditor: React.FC = () => {
   const [mytitle, setMyTitle] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
   const [details, setDetails] = useState<DetailItem[]>([]);
   const [detailsToBeUpdated, setDetailsToBeUpdated] =
     useState<DetailItem | null>(null);
@@ -106,11 +107,40 @@ const TextEditor: React.FC = () => {
     }
   };
 
-  const handleEdit = (item: DetailItem) => {
-    setMyTitle(item.title);
-    setMyDetail(item.detail);
-    setDetailIsUpdated(true);
-    setDetailsToBeUpdated(item);
+  // const handleEdit = (item: DetailItem) => {
+  //   setMyTitle(item.title);
+  //   setMyDetail(item.detail);
+  //   setDetailIsUpdated(true);
+  //   setDetailsToBeUpdated(item);
+  // };
+
+  const onUpdateHandler = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setLoadingBtn(true);
+
+    if (!detailsToBeUpdated) {
+      console.error("detailsToBeUpdated is undefined");
+      setLoadingBtn(false);
+      return;
+    }
+    try {
+      const res = await axios.patch("/api/update", { ...detailsToBeUpdated });
+
+      if (res.status === 200) {
+        setDetailIsUpdated(false);
+        setDetails(
+          details.map((section) =>
+            section.id === detailsToBeUpdated.id ? detailsToBeUpdated : section
+          )
+        );
+      }
+    } catch (error: any) {
+      console.log("error", error.message);
+    } finally {
+      setLoadingBtn(false);
+    }
   };
 
   const modules = {
@@ -182,10 +212,10 @@ const TextEditor: React.FC = () => {
         <button
           type="button"
           className="mt-8 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-          onClick={handleClick}
-          disabled={loading}
+          onClick={detailIsUpdated ? onUpdateHandler : handleClick}
+          disabled={loading || loadingBtn}
         >
-          {loading
+          {loading || loadingBtn
             ? detailIsUpdated
               ? "Updating..."
               : "Adding..."
@@ -202,7 +232,10 @@ const TextEditor: React.FC = () => {
               <div className="flex items-center">
                 <IoReorderThreeOutline
                   className="cursor-pointer mr-2 text-gray-600"
-                  onClick={() => handleEdit(item)}
+                  onClick={() => {
+                    setDetailIsUpdated(true);
+                    setDetailsToBeUpdated(item);
+                  }}
                 />
                 <IoClose
                   className="cursor-pointer text-red-500"
