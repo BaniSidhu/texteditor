@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { IoReorderThreeOutline, IoClose } from "react-icons/io5";
+import { CldUploadWidget } from "next-cloudinary";
 
 const TextEditor: React.FC = () => {
   interface DetailItem {
@@ -19,7 +20,7 @@ const TextEditor: React.FC = () => {
     title: string;
     detail: string;
   }
-
+  const [hostedUrl, setHostedUrl] = useState([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [mydetail, setMyDetail] = useState<string>("");
   const [mytitle, setMyTitle] = useState<string>("");
@@ -184,30 +185,38 @@ const TextEditor: React.FC = () => {
       </div>
       <br />
       <div className="flex flex-col items-center mt-4">
-        {!selectedFile ? (
-          <label className="flex flex-col items-center px-4 py-6 bg-gray-200 text-gray-800 rounded-lg shadow-lg tracking-wide uppercase border border-gray-300 cursor-pointer hover:bg-gray-300 hover:text-black">
-            <FaRegImage className="w-8 h-8" />
-            <span className="mt-2 text-base leading-normal">Select a file</span>
-            <input type="file" className="hidden" onChange={handleFileChange} />
-          </label>
-        ) : (
-          <div className="flex flex-col items-center">
-            <img
-              src={URL.createObjectURL(selectedFile)}
-              alt="Selected file"
-              className="w-32 h-32 object-cover rounded-lg shadow-lg"
-            />
-            <button className="mt-2 text-sm text-gray-500 hover:text-gray-700 focus:outline-none">
-              Upload
-            </button>
-            <button
-              className="mt-2 text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
-              onClick={() => setSelectedFile(null)}
-            >
-              Remove
-            </button>
-          </div>
-        )}
+        <div className="flex flex-col items-center px-4 py-6 bg-gray-200 text-gray-800 rounded-lg shadow-lg tracking-wide uppercase border border-gray-300 cursor-pointer hover:bg-gray-300 hover:text-black">
+          <p>Hosted Urls:</p>
+          {/* {
+  hostedUrl?.map((url: any, idx: any) => {
+    return (
+      <div key={idx}>
+        <img src={url} height={200} width={200} alt="" />
+        <p>{url}</p>
+      </div>
+    );
+  })
+} */}
+
+          <CldUploadWidget
+            uploadPreset="dz98pmrj"
+            // onSuccess={(prevHostedUrl) => setHostedUrl(....prevHostedUrl?.info?.url)}
+          >
+            {({ open }) => {
+              return (
+                <button
+                  className="flex flex-col items-center"
+                  onClick={() => open()}
+                >
+                  <FaRegImage className="w-8 h-8" />
+                  <span className="mt-2 text-base leading-normal">
+                    Upload an Image
+                  </span>
+                </button>
+              );
+            }}
+          </CldUploadWidget>
+        </div>
 
         <button
           type="button"
