@@ -5,7 +5,7 @@ export const PATCH = async (request: NextRequest) => {
   try {
     const res = await request.json();
     const data =
-      await sql`UPDATE additem SET title=${res.title}, detail=${res.detail},imageUrl=${res.imageUrl[0]} WHERE id=${res.id} `;
+      await sql`UPDATE additem SET title=${res.title}, detail=${res.detail},imageUrl=${res.imageUrl} WHERE id=${res.id} `;
 
     console.log("data is this", data);
     console.log("response of update is ", res);

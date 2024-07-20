@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 
 export const GET = async () => {
   try {
-    const data = await sql`SELECT title, detail FROM additem`;
+    const data = await sql`SELECT title, detail,imageUrl FROM additem`;
     console.log("Your IDS are", data);
 
     return NextResponse.json({

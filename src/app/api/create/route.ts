@@ -7,12 +7,13 @@ export const POST = async (request: NextRequest) => {
     console.log(res);
 
     const data =
-      await sql`INSERT INTO additem(title,detail) VALUES(${res.title},${res.detail})  RETURNING *`;
+      await sql`INSERT INTO additem(title,detail,imageUrl) VALUES(${res.title},${res.detail},${res.imageUrl})  RETURNING *`;
     console.log(data);
 
     return NextResponse.json({
       title: "",
       detail: "",
+      imageUrl: "",
 
       data: data.rows[0],
     });
